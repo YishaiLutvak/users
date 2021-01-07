@@ -9,7 +9,7 @@ class UsersComp extends Component
   constructor()
   {
     super()
-    this.state = {users:[],todos:[],posts:[]}
+    this.state = {users:[],todos:[],posts:[], search: ''}
   }
 
   async componentDidMount() {
@@ -47,14 +47,17 @@ class UsersComp extends Component
 
   render()
   {
-    let items = this.state.users.map((item)=>{
-      return <div key={item.id}><UserComp id={item.id} name={item.name} email={item.email}
-       todos={this.state.todos.filter(todo=>todo.userId == item.id)}
-       update={this.updateUser} delete={this.updateUser}/><br/></div>
+    let items = this.state.users.filter(
+      x => (x.name.toUpperCase().includes(this.state.search)||x.email.toUpperCase().includes(this.state.search)))
+    .map((item)=>{
+      return <div key={item.id}><UserComp id={item.id} name={item.name} email={item.email} address={item.address}
+        todos={this.state.todos.filter(todo=>todo.userId == item.id)}
+        update={this.updateUser} delete={this.updateUser}/><br/></div>
+    
     })
     return (
       <div style={{borderStyle:'solid', borderColor:'blue'}}>
-        Searsh: <input type="text"/>
+        Searsh: <input type="text" onChange={e=>this.setState({search:e.target.value.toUpperCase()})}/>
         <input type="button" value="Add"/>
         <br/><br/>
         {items}
