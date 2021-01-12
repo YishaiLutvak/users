@@ -1,6 +1,5 @@
 import React,{Component} from 'react'
 import './App.css';
-import utils from './Utils'
 import TaskComp from './Task'
 
 class UserComp extends Component
@@ -8,7 +7,7 @@ class UserComp extends Component
   constructor()
   {
     super()
-    this.state = {id: 0 , name:'',email: '',todos:[], posts:[],
+    this.state = {id: 0 , name:'',email: '',
     isOtherData:false,street:'', city: '', zipcode:'',isSelect:false}
   }
 
@@ -17,8 +16,6 @@ class UserComp extends Component
     this.setState({id:this.props.id})
     this.setState({name:this.props.name})
     this.setState({email:this.props.email})
-    this.setState({todos:this.props.todos})
-    this.setState({posts:this.props.posts})
     this.setState({street:this.props.address.street})
     this.setState({city:this.props.address.city})
     this.setState({zipcode:this.props.address.zipcode})
@@ -41,24 +38,25 @@ class UserComp extends Component
     let styleUser;
     let userTodos;
     let userPosts;
+    
     if (this.state.isSelect) {
       styleUser = {backgroundColor:'orange',borderStyle: 'solid', borderColor:'yellow' , width: '300px'}
       userTodos=<div style={{width:'550px'}}>
         Todos User {this.state.id}:<br/>
         <input style={{backgroundColor:'orange'}} type="button" value="Add"/>
         <div style={{borderStyle:'solid', backgroundColor:'orange'}}>
-          {this.state.todos.map((todo,index)=>
+          {this.props.todos.map((todo,index)=>
           {
             return <div key={index}><TaskComp todo={todo}/><br/></div>
           })}
         </div>
       </div>
-      
+      userPosts=null
     }
     else{
       userTodos = null;
       userPosts = null;
-      (this.state.todos.map(todo => todo.complete).indexOf(false)!==-1 ?
+      (this.props.todos.map(todo => todo.completed).indexOf(false)==-1 ?
       styleUser={backgroundColor:'greenyellow',borderStyle: 'solid', borderColor:'green' , width: '300px'}:
       styleUser={backgroundColor:'pink',borderStyle: 'solid', borderColor:'red', width: '300px'})
     }
