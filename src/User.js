@@ -1,13 +1,15 @@
 import React,{Component} from 'react'
 import './App.css';
 import utils from './Utils'
+import TaskComp from './Task'
 
 class UserComp extends Component
 {
   constructor()
   {
     super()
-    this.state = {id: 0 , name:'',email: '',todos:[],isOtherData:false,street:'', city: '', zipcode:'',isSelect:false}
+    this.state = {id: 0 , name:'',email: '',todos:[], posts:[],
+    isOtherData:false,street:'', city: '', zipcode:'',isSelect:false}
   }
 
   componentDidMount() 
@@ -16,53 +18,80 @@ class UserComp extends Component
     this.setState({name:this.props.name})
     this.setState({email:this.props.email})
     this.setState({todos:this.props.todos})
-    this.setState({address:this.props.address})
+    this.setState({posts:this.props.posts})
+    this.setState({street:this.props.address.street})
+    this.setState({city:this.props.address.city})
+    this.setState({zipcode:this.props.address.zipcode})
   }
 
   updateData = () =>
   {
-    let obj = { id:this.state.id,name:this.state.name,email: this.state.email }
+    let obj = { id:this.state.id,name:this.state.name,email: this.state.email,
+       address:{street:this.state.street, city:this.state.city, zipcode:this.state.zipcode} }
     this.props.update(obj)
   }
 
-  DeleteData = () =>
+  deleteData = () =>
   {
     this.props.delete(this.state.id)
   }
   
   render()
   {
-    let styleUser
-    this.state.isSelect? styleUser =
-      {backgroundColor:'orange',borderStyle: 'solid', borderColor:'yellow' , width: '300px'}:
-    (this.state.todos.map(todo => todo.complete).indexOf(false)!==-1 ?
+    let styleUser;
+    let userTodos;
+    let userPosts;
+    if (this.state.isSelect) {
+      styleUser = {backgroundColor:'orange',borderStyle: 'solid', borderColor:'yellow' , width: '300px'}
+      userTodos=<div style={{width:'550px'}}>
+        Todos User {this.state.id}:<br/>
+        <input style={{backgroundColor:'orange'}} type="button" value="Add"/>
+        <div style={{borderStyle:'solid', backgroundColor:'orange'}}>
+          {this.state.todos.map((todo,index)=>
+          {
+            return <div key={index}><TaskComp todo={todo}/><br/></div>
+          })}
+        </div>
+      </div>
+      
+    }
+    else{
+      userTodos = null;
+      userPosts = null;
+      (this.state.todos.map(todo => todo.complete).indexOf(false)!==-1 ?
       styleUser={backgroundColor:'greenyellow',borderStyle: 'solid', borderColor:'green' , width: '300px'}:
       styleUser={backgroundColor:'pink',borderStyle: 'solid', borderColor:'red', width: '300px'})
+    }
+    
 
     let address
     this.state.isOtherData? address=<div style={{borderStyle:'solid'}}>
       Street:
-        <input type='text' value={this.state?.address.street} onChange={e=>this.setState({street:e.target.value})}/>
+        <input type='text' value={this.state?.street} onChange={e=>this.setState({street:e.target.value})}/>
         <br/>
       City:
-        <input type='text' value={this.state?.address.city} onChange={e=>this.setState({city:e.target.value})}/><br/>
+        <input type='text' value={this.state?.city} onChange={e=>this.setState({city:e.target.value})}/><br/>
       Zip Code:
-        <input type='text' value={this.state?.address.zipcode} onChange={e=>this.setState({zipcode:e.target.value})}/>
+        <input type='text' value={this.state?.zipcode} onChange={e=>this.setState({zipcode:e.target.value})}/>
     </div>:address=null 
 
     return (
-      <div style={styleUser}>
-        <label onClick={()=>this.setState({isSelect:!this.state.isSelect})}>ID:</label> {this.state?.id}<br/>
-        Name: <input type='text' value={this.state?.name} onChange={e=>this.setState({name:e.target.value})}/>
-        <br/>
-        Email: <input type='text' value={this.state?.email} onChange={e=>this.setState({email:e.target.value})}/>
-        <br/>
-        <input type="button" value="Other Data" style={{backgroundColor: 'grey'}}
-          onMouseEnter={()=>this.setState({isOtherData:true})} onClick={()=>this.setState({isOtherData:false})}/>
-        {address}
-        <input type="button" value="Update" onClick={this.updateData}/>
-        <input type="button" value="Delete" onClick={this.DeleteData}/>
-      </div>
+      <div>
+            <div style={styleUser}>
+            <label onClick={()=>this.setState({isSelect:!this.state.isSelect})}>ID:</label> {this.state?.id}<br/>
+            Name: <input type='text' value={this.state?.name} onChange={e=>this.setState({name:e.target.value})}/>
+            <br/>
+            Email: <input type='text' value={this.state?.email} onChange={e=>this.setState({email:e.target.value})}/>
+            <br/>
+            <input type="button" value="Other Data" style={{backgroundColor: 'grey'}}
+              onMouseEnter={()=>this.setState({isOtherData:true})} onClick={()=>this.setState({isOtherData:false})}/>
+            {address}
+            <input type="button" value="Update" onClick={this.updateData}/>
+            <input type="button" value="Delete" onClick={this.deleteData}/>
+            </div>
+            {userTodos}
+            {userPosts}
+      </div>       
     )
   }
 }
